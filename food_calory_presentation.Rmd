@@ -1,0 +1,55 @@
+---
+title: "Food calory shiny App"
+author: "Qing Mao"
+date: "9/8/2020"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(ggplot2)
+library(plotly)
+```
+
+## Overview for the App
+- Summary
+This Shiny App calculated Food calory and nutrition amounts based on 3 food entried. 
+- Motivation
+This app could help tracking/monitoring amount and types of nutrients consumed in a straightforward and user-friendly way.
+
+## Instruction of app
+- Usage 
+From the left panel, drop down selections choose 3 food items, and amount (in gram). After clicking button 'add food', a seperate bar chart will be shown on each tab on the main panel for major nutrien amounts for each food item (calculated for the amount selected in the input), and also a combined plot for all 3 food items summed up.
+- Data Source 
+https://www.canada.ca/en/health-canada/services/food-nutrition/healthy-eating/nutrient-data/canadian-nutrient-file-2015-download-files.html
+- Code file available on github
+https://github.com/qingmaopsu/shiny_app_assignment
+
+
+## Original data example
+
+```{r show_food1_plot, echo = FALSE, comment=NA}
+nutrient_data=read.table("./nutrient_amount_per100gfood_data_forshiny.txt", header=T,sep="\t",stringsAsFactors = F,comment.char = "",quote = "")
+
+head(nutrient_data)
+```
+Original data contains nutrient/energy contained per 100g for each food item.
+
+## Example plot of a given food item
+food_id=Cheese souffle
+food_amount=120g
+```{r example_plot, echo=FALSE}
+food_id="Cheese souffle"
+food_amount=120
+
+nutrient_data=nutrient_data[nutrient_data$FoodDescription==food_id,]
+nutrient_data$NutrientAmount=nutrient_data$NutrientValue/100*food_amount
+
+nutrient_plot=ggplot(data=nutrient_data)+
+            geom_col(aes(x=NutrientName,y=NutrientAmount,fill=NutrientName))+
+            theme_bw()+
+            theme(panel.grid = element_blank(),legend.position = "none",axis.text.x = element_text(size=8))
+        
+ggplotly(nutrient_plot)
+```
+
